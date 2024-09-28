@@ -4,8 +4,6 @@ import com.pro.tuitdormitory.domain.RefreshToken;
 import com.pro.tuitdormitory.domain.User;
 import com.pro.tuitdormitory.dto.request.LoginRequest;
 import com.pro.tuitdormitory.helper.TokenRefreshException;
-import com.pro.tuitdormitory.model.JWToken;
-import com.pro.tuitdormitory.security.TokenService;
 import com.pro.tuitdormitory.service.RefreshTokenService;
 import com.pro.tuitdormitory.service.UserService;
 import com.pro.tuitdormitory.service.impl.UserServiceImpl;
@@ -17,18 +15,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

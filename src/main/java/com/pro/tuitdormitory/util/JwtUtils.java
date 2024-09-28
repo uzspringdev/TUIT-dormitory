@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class JwtUtils {
     private String refreshCookieName;
 
     @Value("${json.web.token.secret}")
-    private  String secret;
+    private String secret;
 
     @Value("${json.web.token.validation-time}")
     private Integer validationTime;
@@ -46,7 +48,7 @@ public class JwtUtils {
     }*/
 
     public ResponseCookie generateJwtCookie(User user) {
-        String jwt = generateTokenFromUsername(user.getUsername());
+        String jwt = generateTokenFromUsername(user);
         return generateCookie(cookieName, jwt, "/api/v1");
     }
 
@@ -93,12 +95,19 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromUsername(User user) {
+        String roles = user.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        Claims claims = Jwts.claims();
+        claims.setSubject(user.getUsername());
+        claims.put("roles", roles);
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS256, this.secret)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + validationTime))
-                .signWith(SignatureAlgorithm.HS512, this.secret)
                 .compact();
     }
 

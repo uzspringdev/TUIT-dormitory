@@ -23,8 +23,7 @@ public class TokenSecurityFilter extends OncePerRequestFilter {
         String token = jwtUtils.getJwtFromCookies(request);
 
         if (StringUtils.hasText(token) && jwtUtils.validateJwtToken(token)) {
-            String username = jwtUtils.getUserNameFromJwtToken(token);
-            Authentication authentication = jwtUtils.getAuthentication(username);
+            Authentication authentication = jwtUtils.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
